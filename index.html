@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Desempenho do Computador</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: block;
+            color: #444;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            color: #333;
+            background-color: #f9f9f9;
+            transition: border 0.3s ease, background-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background-color: #fff;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: #FF5722;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        .error-input {
+            border-color: #FF5722;
+        }
+
+        .result, .suggestions {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f1f1f1;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .result h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .result p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .termometro {
+            margin-top: 20px;
+            height: 30px;
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .barra-termometro {
+            height: 100%;
+            width: 0%;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .suggestions h3 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .suggestions ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .suggestions ul li {
+            font-size: 15px;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .suggestions ul li span {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Cálculo de Desempenho do Computador</h1>
+
+        <label for="memoria">Memória RAM (em GB):</label>
+        <input type="number" id="memoria" placeholder="Ex: 16" required>
+        <p id="memoriaError" class="error"></p>
+
+        <label for="tipo_ram">Tipo de RAM:</label>
+        <select id="tipo_ram">
+            <option value="DDR3">DDR3</option>
+            <option value="DDR4">DDR4</option>
+            <option value="DDR5">DDR5</option>
+        </select>
+
+        <label for="velocidade_ram">Velocidade da RAM (em MHz):</label>
+        <input type="number" id="velocidade_ram" placeholder="Ex: 3200" required>
+        <p id="velocidadeRamError" class="error"></p>
+
+        <label for="ssd">Armazenamento SSD (em GB):</label>
+        <input type="number" id="ssd" placeholder="Ex: 512" required>
+        <p id="ssdError" class="error"></p>
+
+        <label for="tipo_ssd">Tipo de SSD:</label>
+        <select id="tipo_ssd">
+            <option value="SATA">SATA</option>
+            <option value="NVMe">NVMe</option>
+        </select>
+
+        <label for="clock">Clock Base do Processador (em GHz):</label>
+        <input type="number" id="clock" placeholder="Ex: 3.5" step="0.1" required>
+        <p id="clockError" class="error"></p>
+
+        <label for="nucleos">Quantidade de Núcleos do Processador:</label>
+        <input type="number" id="nucleos" placeholder="Ex: 8" required>
+        <p id="nucleosError" class="error"></p>
+
+        <label for="geracao">Geração do Processador (Ex: 10, 11, 12):</label>
+        <input type="number" id="geracao" placeholder="Ex: 11" required>
+        <p id="geracaoError" class="error"></p>
+
+        <label for="memoria_video">Memória da Placa de Vídeo (em GB):</label>
+        <input type="number" id="memoria_video" placeholder="Ex: 6" required>
+        <p id="memoriaVideoError" class="error"></p>
+
+        <label for="resfriamento">Tecnologia de Resfriamento:</label>
+        <select id="resfriamento">
+            <option value="Ar">Ar</option>
+            <option value="Liquido">Líquido</option>
+        </select>
+
+        <button onclick="calcularDesempenho()">Calcular Desempenho</button>
+
+        <div id="resultado" class="result">
+            <h2>Resultado:</h2>
+            <p id="pontuacao">Aguardando cálculo...</p>
+            <p id="classificacao">Aguardando cálculo...</p>
+            <!-- Termômetro de desempenho -->
+            <div class="termometro">
+                <div id="barraTermometro" class="barra-termometro"></div>
+            </div>
+        </div>
+
+        <div id="sugestoes" class="suggestions">
+            <h3>Sugestões para melhorar o desempenho:</h3>
+            <ul id="sugestoesList">
+                <!-- Sugestões aparecerão aqui -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function calcularDesempenho() {
+            // Limpa as mensagens de erro
+            limparErros();
+
+            // Pega os valores dos inputs
+            const memoria = parseFloat(document.getElementById("memoria").value);
+            const tipo_ram = document.getElementById("tipo_ram").value;
+            const velocidade_ram = parseFloat(document.getElementById("velocidade_ram").value);
+            const ssd = parseFloat(document.getElementById("ssd").value);
+            const tipo_ssd = document.getElementById("tipo_ssd").value;
+            const clock = parseFloat(document.getElementById("clock").value);
+            const nucleos = parseInt(document.getElementById("nucleos").value);
+            const geracao = parseInt(document.getElementById("geracao").value);
+            const memoria_video = parseFloat(document.getElementById("memoria_video").value);
+            const resfriamento = document.getElementById("resfriamento").value;
+
+            let validacao = true;
+
+            // Valida se os valores são válidos
+            if (isNaN(memoria) || memoria <= 0) {
+                document.getElementById("memoriaError").textContent = "Por favor, insira um valor válido para a memória RAM.";
+                document.getElementById("memoria").classList.add("error-input");
+                validacao = false;
+            }
+            if (isNaN(velocidade_ram) || velocidade_ram <= 0) {
+                document.getElementById("velocidadeRamError").textContent = "Por favor, insira um valor válido para a velocidade da memória RAM.";
+                document.getElementById("velocidade_ram").classList.add("error-input");
+                validacao = false;
+            }
+            if (isNaN(ssd) || ssd <= 0) {
+                document.getElementById("ssdError").textContent = "Por favor, insira um valor válido para o armazenamento SSD.";
+                document.getElementById("ssd").classList.add("error-input");
+                validacao = false;
+            }
+            if (isNaN(clock) || clock <= 0) {
+                document.getElementById("clockError").textContent = "Por favor, insira um valor válido para o clock do processador.";
+                document.getElementById("clock").classList.add("error-input");
+                validacao = false;
+            }
+            if (isNaN(nucleos) || nucleos <= 0) {
+                document.getElementById("nucleosError").textContent = "Por favor, insira um valor válido para a quantidade de núcleos.";
+                document.getElementById("nucleos").classList.add("error-input");
+                validacao = false;
+            }
+            if (isNaN(geracao) || geracao <= 0) {
+                document.getElementById("geracaoError").textContent = "Por favor, insira um valor válido para a geração do processador.";
+                document.getElementById("geracao").classList.add("error-input");
+                validacao = false;
+            }
+            if (isNaN(memoria_video) || memoria_video <= 0) {
+                document.getElementById("memoriaVideoError").textContent = "Por favor, insira um valor válido para a memória da placa de vídeo.";
+                document.getElementById("memoria_video").classList.add("error-input");
+                validacao = false;
+            }
+
+            if (!validacao) return;
+
+            // Fórmula para calcular o desempenho
+            let desempenho = (memoria * 1.2) + (ssd * 0.8) + (clock * 8) + (nucleos * 6) + (geracao * 3) + (memoria_video * 2);
+
+            // Modificações baseadas nos fatores adicionais
+            if (tipo_ram === "DDR5") desempenho += 50;
+            if (tipo_ram === "DDR4") desempenho += 30;
+            if (tipo_ram === "DDR3") desempenho -= 30;
+            if (velocidade_ram > 3000) desempenho += 30;
+            if (tipo_ssd === "NVMe") desempenho += 40;
+            if (resfriamento === "Liquido") desempenho += 30;
+
+            // Exibe o resultado
+            const resultadoElement = document.getElementById("resultado");
+            const pontuacaoElement = document.getElementById("pontuacao");
+            const classificacaoElement = document.getElementById("classificacao");
+            const termometroElement = document.getElementById("barraTermometro");
+
+            resultadoElement.style.display = "block";
+            pontuacaoElement.textContent = `Sua pontuação de desempenho é: ${desempenho.toFixed(2)} pontos.`;
+
+            // Classificação do desempenho
+            let classificacao = "";
+            if (desempenho >= 1000) {
+                classificacao = "Desempenho Alto! Seu computador está muito bem equipado.";
+            } else if (desempenho >= 500) {
+                classificacao = "Desempenho Médio. Seu computador tem um bom desempenho, mas pode ser melhorado.";
+            } else {
+                classificacao = "Desempenho Baixo. Seu computador pode ter dificuldades com tarefas mais exigentes.";
+            }
+
+            classificacaoElement.textContent = classificacao;
+
+            // Atualiza a barra de desempenho (termômetro)
+            const porcentagemDesempenho = Math.min(100, desempenho / 1000 * 100); // Limita a 100%
+            termometroElement.style.width = porcentagemDesempenho + "%";
+
+            // Sugestões de melhoria
+            const sugestoesList = document.getElementById("sugestoesList");
+            const sugestoesElement = document.getElementById("sugestoes");
+
+            // Limpa a lista de sugestões anteriores
+            sugestoesList.innerHTML = "";
+
+            if (desempenho < 500) {
+                const sugestao1 = document.createElement("li");
+                sugestao1.innerHTML = "Considere adicionar mais memória RAM (16 GB ou mais) para melhorar o desempenho em multitarefas.";
+                sugestoesList.appendChild(sugestao1);
+
+                const sugestao2 = document.createElement("li");
+                sugestao2.innerHTML = "Investir em um SSD NVMe de maior capacidade (1 TB ou mais) pode acelerar o tempo de carregamento de jogos e programas.";
+                sugestoesList.appendChild(sugestao2);
+
+                const sugestao3 = document.createElement("li");
+                sugestao3.innerHTML = "Troque o processador por uma versão mais recente, com mais núcleos e maior clock.";
+                sugestoesList.appendChild(sugestao3);
+
+                sugestoesElement.style.display = "block";
+            } else {
+                sugestoesElement.style.display = "none";
+            }
+        }
+
+        // Função para limpar os erros dos campos
+        function limparErros() {
+            document.getElementById("memoriaError").textContent = "";
+            document.getElementById("velocidadeRamError").textContent = "";
+            document.getElementById("ssdError").textContent = "";
+            document.getElementById("clockError").textContent = "";
+            document.getElementById("nucleosError").textContent = "";
+            document.getElementById("geracaoError").textContent = "";
+            document.getElementById("memoriaVideoError").textContent = "";
+
+            document.getElementById("memoria").classList.remove("error-input");
+            document.getElementById("velocidade_ram").classList.remove("error-input");
+            document.getElementById("ssd").classList.remove("error-input");
+            document.getElementById("clock").classList.remove("error-input");
+            document.getElementById("nucleos").classList.remove("error-input");
+            document.getElementById("geracao").classList.remove("error-input");
+            document.getElementById("memoria_video").classList.remove("error-input");
+        }
+    </script>
+</body>
+</html>
