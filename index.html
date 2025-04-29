@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Desempenho do Computador</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -14,87 +15,102 @@
 
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f4f7fc;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
             color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
             width: 100%;
-            max-width: 650px;
+            max-width: 700px;
             background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            overflow: hidden;
+            animation: slideIn 1s ease-out;
+        }
+
+        @keyframes slideIn {
+            0% { transform: translateY(-50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
 
         h1 {
             text-align: center;
-            color: #4CAF50;
-            margin-bottom: 20px;
+            color: #00796b;
+            margin-bottom: 30px;
+            font-size: 36px;
+            font-weight: 500;
         }
 
         label {
-            font-size: 16px;
+            font-size: 18px;
             margin-bottom: 8px;
             display: block;
+            font-weight: 500;
         }
 
         input, select {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 16px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
             font-size: 16px;
-            background-color: #f9f9f9;
+            background-color: #f1f1f1;
+            transition: all 0.3s ease;
         }
 
         input:focus, select:focus {
             outline: none;
-            border-color: #4CAF50;
+            border-color: #00796b;
             background-color: #fff;
         }
 
         button {
             width: 100%;
-            padding: 14px;
-            background-color: #4CAF50;
+            padding: 16px;
+            background-color: #00796b;
             color: white;
-            font-size: 16px;
+            font-size: 18px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #004d40;
         }
 
         .error {
-            color: #FF5722;
+            color: #f44336;
             font-size: 14px;
             margin-top: -10px;
             margin-bottom: 20px;
         }
 
         .error-input {
-            border-color: #FF5722;
+            border-color: #f44336;
         }
 
         .result, .suggestions {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f1f1f1;
-            border-radius: 12px;
+            margin-top: 40px;
+            padding: 25px;
+            background-color: #e1f5fe;
+            border-radius: 15px;
             display: none;
+            animation: fadeIn 1s ease-out;
         }
 
-        .result h2 {
-            margin-bottom: 10px;
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
         }
 
         .termometro {
@@ -102,14 +118,15 @@
             height: 30px;
             width: 100%;
             background-color: #ddd;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
+            transition: all 1s ease;
         }
 
         .barra-termometro {
             height: 100%;
             width: 0%;
-            background-color: #4CAF50;
+            background-color: #00796b;
             transition: width 1s ease, background-color 0.5s ease;
         }
 
@@ -119,8 +136,9 @@
         }
 
         .suggestions ul li {
-            font-size: 15px;
-            margin-bottom: 8px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
         }
 
         @media (max-width: 768px) {
@@ -130,84 +148,54 @@
         }
 
         .result {
-            border-left: 6px solid;
+            border-left: 8px solid;
         }
 
         .result.alto {
-            border-color: #4CAF50;
+            border-color: #00796b;
         }
 
         .result.medio {
-            border-color: #FFC107;
+            border-color: #ff9800;
         }
 
         .result.baixo {
-            border-color: #F44336;
+            border-color: #f44336;
+        }
+
+        #nextButton {
+            margin-top: 25px;
+        }
+
+        /* Transição para a próxima pergunta */
+        .question-container {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .question-container.visible {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Cálculo de Desempenho do Computador</h1>
-
-        <label for="memoria">Memória RAM (em GB):</label>
-        <input type="number" id="memoria" placeholder="Ex: 16">
-        <p id="memoriaError" class="error"></p>
-
-        <label for="tipo_ram">Tipo de RAM:</label>
-        <select id="tipo_ram">
-            <option value="DDR3">DDR3</option>
-            <option value="DDR4">DDR4</option>
-            <option value="DDR5">DDR5</option>
-        </select>
-
-        <label for="velocidade_ram">Velocidade da RAM (MHz):</label>
-        <input type="number" id="velocidade_ram" placeholder="Ex: 3200">
-        <p id="velocidade_ramError" class="error"></p>
-
-        <label for="ssd">Armazenamento SSD (em GB):</label>
-        <input type="number" id="ssd" placeholder="Ex: 512">
-        <p id="ssdError" class="error"></p>
-
-        <label for="tipo_ssd">Tipo de SSD:</label>
-        <select id="tipo_ssd">
-            <option value="SATA">SATA</option>
-            <option value="NVMe">NVMe</option>
-        </select>
-
-        <label for="clock">Clock Base do Processador (GHz):</label>
-        <input type="number" id="clock" step="0.1" placeholder="Ex: 3.5">
-        <p id="clockError" class="error"></p>
-
-        <label for="nucleos">Núcleos do Processador:</label>
-        <input type="number" id="nucleos" placeholder="Ex: 8">
-        <p id="nucleosError" class="error"></p>
-
-        <label for="geracao">Geração do Processador:</label>
-        <input type="number" id="geracao" placeholder="Ex: 12">
-        <p id="geracaoError" class="error"></p>
-
-        <label for="memoria_video">Memória da GPU (GB):</label>
-        <input type="number" id="memoria_video" placeholder="Ex: 6">
-        <p id="memoria_videoError" class="error"></p>
-
-        <label for="resfriamento">Tipo de Resfriamento:</label>
-        <select id="resfriamento">
-            <option value="Ar">Ar</option>
-            <option value="Liquido">Líquido</option>
-        </select>
-
-        <button onclick="calcularDesempenho()">Calcular Desempenho</button>
+        <h1>Cálculo de Desempenho do Computador 🎮💻</h1>
+        
+        <div id="quiz">
+            <div id="pergunta-container" class="question-container"></div>
+            <button id="nextButton" onclick="proximaPergunta()">Próxima 🧐</button>
+        </div>
 
         <div id="resultado" class="result">
-            <h2>Resultado:</h2>
+            <h2>Resultado 📊:</h2>
             <p id="pontuacao"></p>
             <p id="classificacao"></p>
             <div class="termometro"><div id="barraTermometro" class="barra-termometro"></div></div>
         </div>
 
         <div id="sugestoes" class="suggestions">
-            <h3>Sugestões para melhoria:</h3>
+            <h3>Sugestões para melhoria 🛠️:</h3>
             <ul id="sugestoesList"></ul>
         </div>
     </div>
@@ -225,53 +213,66 @@
             resfriamento: 0.02
         };
 
+        let respostas = {};
+        let perguntaIndex = 0;
+        const perguntas = [
+            { id: "memoria", pergunta: "Quantos GB de Memória RAM você tem? 🧠", tipo: "number" },
+            { id: "tipo_ram", pergunta: "Qual o tipo da sua RAM? 💾", tipo: "select", opcoes: ["DDR3", "DDR4", "DDR5"] },
+            { id: "velocidade_ram", pergunta: "Qual a velocidade da RAM (MHz)? ⚡", tipo: "number" },
+            { id: "ssd", pergunta: "Qual o tamanho do seu SSD (GB)? 💽", tipo: "number" },
+            { id: "tipo_ssd", pergunta: "Qual o tipo do seu SSD? 🏎️", tipo: "select", opcoes: ["SATA", "NVMe"] },
+            { id: "clock", pergunta: "Qual a velocidade do clock do seu processador (GHz)? ⏱️", tipo: "number" },
+            { id: "nucleos", pergunta: "Quantos núcleos tem o seu processador? 🔥", tipo: "number" },
+            { id: "geracao", pergunta: "Qual a geração do seu processador? 🧑‍💻", tipo: "number" },
+            { id: "memoria_video", pergunta: "Qual a memória da sua GPU (GB)? 🎮", tipo: "number" },
+            { id: "resfriamento", pergunta: "Qual o tipo de resfriamento do seu PC? ❄️", tipo: "select", opcoes: ["Ar", "Liquido"] }
+        ];
+
+        function carregarPergunta() {
+            const perguntaAtual = perguntas[perguntaIndex];
+            const perguntaContainer = document.getElementById("pergunta-container");
+            perguntaContainer.innerHTML = '';
+
+            let html = `<label for="${perguntaAtual.id}">${perguntaAtual.pergunta}</label>`;
+            if (perguntaAtual.tipo === "select") {
+                html += `<select id="${perguntaAtual.id}">`;
+                perguntaAtual.opcoes.forEach(opcao => {
+                    html += `<option value="${opcao}">${opcao}</option>`;
+                });
+                html += `</select>`;
+            } else {
+                html += `<input type="${perguntaAtual.tipo}" id="${perguntaAtual.id}" placeholder="Digite aqui..." />`;
+            }
+
+            perguntaContainer.innerHTML = html;
+            perguntaContainer.classList.add("visible");
+        }
+
+        function proximaPergunta() {
+            const perguntaAtual = perguntas[perguntaIndex];
+            const resposta = document.getElementById(perguntaAtual.id).value;
+
+            if (resposta === "" || (perguntaAtual.tipo === "number" && isNaN(resposta))) {
+                alert("Por favor, preencha uma resposta válida!");
+                return;
+            }
+
+            respostas[perguntaAtual.id] = resposta;
+            perguntaIndex++;
+
+            if (perguntaIndex < perguntas.length) {
+                carregarPergunta();
+            } else {
+                calcularDesempenho();
+            }
+        }
+
         function calcularDesempenho() {
-            limparErros();
-            const d = coletarDados();
-            if (!validarCampos(d)) return;
+            const d = respostas;
+
             const pontuacao = calcularPontuacao(d);
             exibirResultado(pontuacao);
             gerarSugestoes(pontuacao, d);
-        }
-
-        function coletarDados() {
-            return {
-                memoria: parseFloat(document.getElementById("memoria").value),
-                tipo_ram: document.getElementById("tipo_ram").value,
-                velocidade_ram: parseFloat(document.getElementById("velocidade_ram").value),
-                ssd: parseFloat(document.getElementById("ssd").value),
-                tipo_ssd: document.getElementById("tipo_ssd").value,
-                clock: parseFloat(document.getElementById("clock").value),
-                nucleos: parseInt(document.getElementById("nucleos").value),
-                geracao: parseInt(document.getElementById("geracao").value),
-                memoria_video: parseFloat(document.getElementById("memoria_video").value),
-                resfriamento: document.getElementById("resfriamento").value
-            };
-        }
-
-        function validarCampos(d) {
-            let valido = true;
-            const campos = [
-                { id: "memoria", nome: "Memória RAM" },
-                { id: "velocidade_ram", nome: "Velocidade da RAM" },
-                { id: "ssd", nome: "SSD" },
-                { id: "clock", nome: "Clock do Processador" },
-                { id: "nucleos", nome: "Núcleos" },
-                { id: "geracao", nome: "Geração do Processador" },
-                { id: "memoria_video", nome: "Memória de Vídeo" }
-            ];
-
-            campos.forEach(({ id, nome }) => {
-                const valor = d[id];
-                const campo = document.getElementById(id);
-                const erro = document.getElementById(`${id}Error`);
-                if (isNaN(valor) || valor <= 0) {
-                    erro.textContent = `Informe um valor válido para ${nome}.`;
-                    campo.classList.add("error-input");
-                    valido = false;
-                }
-            });
-            return valido;
         }
 
         function calcularPontuacao(d) {
@@ -307,20 +308,18 @@
             let texto = "", cor = "";
             if (score >= 80) {
                 texto = "🔥 Desempenho Alto! Seu computador está muito bem equipado.";
-                cor = "#4CAF50";
+                cor = "#00796b";
             } else if (score >= 60) {
                 texto = "⚠️ Desempenho Médio. Há espaço para otimização.";
-                cor = "#FFC107";
+                cor = "#ff9800";
             } else {
                 texto = "❌ Desempenho Baixo. Considere atualizações.";
-                cor = "#F44336";
+                cor = "#f44336";
             }
 
             classificacao.textContent = texto;
             barra.style.width = `${score.toFixed(1)}%`;
             barra.style.backgroundColor = cor;
-
-            resultado.className = "result " + (score >= 80 ? "alto" : score >= 60 ? "medio" : "baixo");
         }
 
         function gerarSugestoes(score, d) {
@@ -350,13 +349,7 @@
             sugestoes.style.display = "block";
         }
 
-        function limparErros() {
-            const campos = ["memoria", "velocidade_ram", "ssd", "clock", "nucleos", "geracao", "memoria_video"];
-            campos.forEach(campo => {
-                document.getElementById(`${campo}Error`).textContent = "";
-                document.getElementById(campo).classList.remove("error-input");
-            });
-        }
+        carregarPergunta();
     </script>
 </body>
 </html>
