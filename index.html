@@ -233,15 +233,15 @@
             const perguntaContainer = document.getElementById("pergunta-container");
             perguntaContainer.innerHTML = '';
 
-            let html = `<label for="${perguntaAtual.id}">${perguntaAtual.pergunta}</label>`;
+            let html = `<label for="${perguntaAtual.id}" aria-label="${perguntaAtual.pergunta}">${perguntaAtual.pergunta}</label>`;
             if (perguntaAtual.tipo === "select") {
-                html += `<select id="${perguntaAtual.id}">`;
+                html += `<select id="${perguntaAtual.id}" aria-label="${perguntaAtual.pergunta}">`;
                 perguntaAtual.opcoes.forEach(opcao => {
                     html += `<option value="${opcao}">${opcao}</option>`;
                 });
                 html += `</select>`;
             } else {
-                html += `<input type="${perguntaAtual.tipo}" id="${perguntaAtual.id}" placeholder="Digite aqui..." />`;
+                html += `<input type="${perguntaAtual.tipo}" id="${perguntaAtual.id}" placeholder="Digite aqui..." aria-label="${perguntaAtual.pergunta}" />`;
             }
 
             perguntaContainer.innerHTML = html;
@@ -252,7 +252,7 @@
             const perguntaAtual = perguntas[perguntaIndex];
             const resposta = document.getElementById(perguntaAtual.id).value;
 
-            if (resposta === "" || (perguntaAtual.tipo === "number" && isNaN(resposta))) {
+            if (resposta === "" || (perguntaAtual.tipo === "number" && isNaN(resposta)) || (perguntaAtual.tipo === "select" && resposta === "")) {
                 alert("Por favor, preencha uma resposta válida!");
                 return;
             }
@@ -338,17 +338,28 @@
                 lista.appendChild(li);
             };
 
-            if (d.memoria < 16) adicionar("Aumente a RAM para pelo menos 16 GB.");
-            if (d.tipo_ssd === "SATA") adicionar("Troque o SSD SATA por NVMe.");
-            if (d.velocidade_ram < 2666) adicionar("Use RAM com velocidade maior que 2666 MHz.");
-            if (d.nucleos < 6) adicionar("Considere um processador com mais núcleos.");
-            if (d.geracao < 10) adicionar("Atualize o processador para uma geração mais recente.");
-            if (d.memoria_video < 6) adicionar("Considere uma GPU com mais VRAM.");
-            if (d.resfriamento === "Ar") adicionar("Use resfriamento líquido para melhor performance térmica.");
+            if (score < 60) {
+                if (d.memoria < 16) adicionar("🔄 Aumente a RAM para pelo menos 16 GB para melhor desempenho multitarefa.");
+                if (d.tipo_ssd === "SATA") adicionar("🚀 Troque seu SSD por um modelo NVMe para maior velocidade de leitura e gravação.");
+                if (d.clock < 3.5) adicionar("⚡ Considere um processador com maior clock (3.5 GHz ou superior) para melhorar o desempenho em jogos.");
+                if (d.nucleos < 8) adicionar("🔨 Procure um processador com pelo menos 8 núcleos para melhorar o desempenho em tarefas multitarefa.");
+                if (d.geracao < 10) adicionar("🔧 Atualize seu processador para uma geração mais recente para obter melhorias significativas.");
+                if (d.memoria_video < 4) adicionar("🎮 Considere uma GPU com mais memória de vídeo (mínimo 4GB) para jogos e edição de vídeos.");
+                if (d.resfriamento === "Ar") adicionar("❄️ Troque o sistema de resfriamento por um modelo a líquido para melhor eficiência térmica.");
+            } else if (score >= 60 && score < 80) {
+                if (d.memoria < 16) adicionar("💡 Aumentar para 16 GB de RAM pode acelerar o desempenho em jogos e multitarefa.");
+                if (d.tipo_ssd === "SATA") adicionar("💻 Atualize para um SSD NVMe para melhorar o tempo de carregamento dos programas.");
+                if (d.clock < 3.5) adicionar("🔧 Um aumento no clock do processador pode trazer ganhos consideráveis de performance.");
+                if (d.nucleos < 8) adicionar("⚙️ Um processador com mais núcleos pode ajudar em multitarefas e softwares pesados.");
+                if (d.geracao < 10) adicionar("🎯 Um upgrade para uma geração mais recente do processador pode melhorar a compatibilidade com novos jogos.");
+                if (d.memoria_video < 4) adicionar("🎮 Considere uma placa de vídeo com mais memória para rodar jogos em resoluções mais altas.");
+                if (d.resfriamento === "Ar") adicionar("🌬️ Considerar um sistema de resfriamento a líquido pode melhorar o desempenho em longas sessões de uso.");
+            }
 
             sugestoes.style.display = "block";
         }
 
+        // Carregar a primeira pergunta
         carregarPergunta();
     </script>
 </body>
