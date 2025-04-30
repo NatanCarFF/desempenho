@@ -157,6 +157,11 @@
       transition: width 0.4s ease;
     }
 
+    #btn-recomecar-container {
+      display: none;
+      margin-top: 25px;
+    }
+
     @media (max-width: 480px) {
       h1 {
         font-size: 24px;
@@ -188,6 +193,11 @@
     <div id="sugestoes" class="suggestions">
       <h3>Melhorias sugeridas:</h3>
       <ul id="sugestoesList"></ul>
+    </div>
+
+    <!-- Botão de Recomeçar -->
+    <div id="btn-recomecar-container">
+      <button onclick="location.reload()">🔄 Recomeçar</button>
     </div>
   </main>
 
@@ -233,7 +243,6 @@
 
       container.innerHTML = html;
 
-      // Atualiza barra de progresso
       const progresso = ((perguntaIndex) / perguntas.length) * 100;
       document.getElementById("progressFill").style.width = `${progresso}%`;
     }
@@ -275,6 +284,9 @@
 
       exibirResultado(score);
       gerarSugestoes(score, d);
+
+      // Exibir botão de recomeçar
+      document.getElementById("btn-recomecar-container").style.display = "block";
     }
 
     function exibirResultado(score) {
